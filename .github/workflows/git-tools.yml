@@ -43,8 +43,9 @@ jobs:
           versionSpec: '0.10.x'          
       - uses: gittools/actions/gitreleasemanager/publish@v0
         name: Publish release with GitReleaseManager
+        if: false
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          owner: 'someOwner'
+          owner: 'henokv'
           repository: 'someRepository'
           tagName: '0.1.0'
