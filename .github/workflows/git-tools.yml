@@ -1,0 +1,52 @@
+name: Git Tools
+
+on:
+#  schedule:
+#    - cron: '18 2 * * *'
+  push:
+    branches: ["main"]
+  workflow_dispatch: 
+
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: ghcr.io
+  # github.repository as <account>/<repo>
+  IMAGE_NAME: ${{ github.repository }}
+
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0
+        with:
+          versionSpec: '5.x'
+      - name: Determine Version
+        uses: gittools/actions/gitversion/execute@v0
+#        with:
+#          useConfigFile: true
+#          configFilePath: VersionConfig.yml
+      - uses: gittools/actions/gitreleasemanager/setup@v0
+        name: Install GitReleaseManager
+        with:
+          versionSpec: '0.10.x'          
+      - uses: gittools/actions/gitreleasemanager/publish@v0
+        name: Publish release with GitReleaseManager
+        if: false
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          owner: 'henokv'
+          repository: 'someRepository'
+          tagName: '0.1.0'
